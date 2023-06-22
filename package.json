@@ -23,7 +23,8 @@
     "run:node": "hardhat node",
     "test": "hardhat test",
     "prettier": "prettier --write 'contracts/**/*.sol' '**/*.ts'",
-    "solhint": "solhint contracts/**/*.sol"
+    "solhint": "solhint contracts/**/*.sol",
+    "circom": "hardhat circom --verbose"
   },
   "dependencies": {
     "ethers": "~5.7.2"
@@ -54,6 +55,7 @@
     "ethereum-public-key-to-address": "^0.0.5",
     "ethereum-waffle": "^4.0.10",
     "hardhat": "^2.15.0",
+    "hardhat-circom": "^3.3.2",
     "hardhat-deploy": "^0.11.31",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.8",

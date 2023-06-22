@@ -21,26 +21,6 @@ Run:
 yarn install
 ```
 
-### Build smart contracts
-
-Run:
-```
-yarn build
-```
-
-### Deploy
-
-Run:
-```
-yarn deploy --network {network}
-```
-
-## Contract Deployments
-
-### Deployment addresses
-
-You can see the deployment address of the smart contracts in the [deployments/goerli](deployments/goerli) and [deployments/mainnet](deployments/mainnet) folders. For every deployed smart contract you will find a `<smart_contract>.json` JSON file with the address in the `"address"` field.
-
 ## Zero-Knowledge Proof
 
 Zero-knowledge proof is a method by which one party (the prover) can prove to another party (the verifier) that the prover knows a value x that fulfills some constraints without revealing any information apart from the fact that he/she knows the value x.
@@ -68,24 +48,30 @@ cargo install --path circom
 npm install -g snarkjs
 ```
 
-### Compile the circuit
+### Generate new powers of tau file
+
+Powers of tau, which is independent of the circuit:
+```
+cd ./circuits
+snarkjs powersoftau new bn128 12 pot12_0000.ptau -v
+snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution" -v
+snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v
+rm pot12_000*.*
+```
+
+### Compile the circuit, generate client files and verifier smart contract
 
 ```
-cd circuits
-circom creditScoreConstraint.circom --r1cs --wasm --sym --c
+yarn circom
 ```
 
 ### Run circuit trusted setup
 
-Powers of tau, which is independent of the circuit:
-```
-snarkjs powersoftau new bn128 12 pot12_0000.ptau -v
-snarkjs powersoftau contribute pot12_0000.ptau pot12_0001.ptau --name="First contribution" -v
-```
+
+
 
 Phase 2, which depends on the circuit:
 ```
-snarkjs powersoftau prepare phase2 pot12_0001.ptau pot12_final.ptau -v
 snarkjs groth16 setup creditScoreConstraint.r1cs pot12_final.ptau creditScoreConstraint_0000.zkey
 snarkjs zkey contribute creditScoreConstraint_0000.zkey creditScoreConstraint_0001.zkey --name="1st Contributor Name" -v
 snarkjs zkey export verificationkey creditScoreConstraint_0001.zkey verification_key.json
@@ -136,3 +122,23 @@ The `Verifier` has a `view` function called `verifyProof` that returns `TRUE` if
 ```
 snarkjs generatecall
 ```
+
+## Contract Deployments
+
+### Build smart contracts
+
+Run:
+```
+yarn build
+```
+
+### Deploy
+
+Run:
+```
+yarn deploy --network {network}
+```
+
+### Deployment addresses
+
+You can see the deployment address of the smart contracts in the [deployments/goerli](deployments/goerli) and [deployments/mainnet](deployments/mainnet) folders. For every deployed smart contract you will find a `<smart_contract>.json` JSON file with the address in the `"address"` field.
