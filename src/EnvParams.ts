@@ -45,6 +45,19 @@ export function getEtherscanApiKey() {
   return process.env.ETHERSCAN_API_KEY || getSecretParam("ETHERSCAN_API_KEY");
 }
 
+export function getInfuraIPFSApiKey() {
+  return (
+    process.env.INFURA_IPFS_API_KEY || getSecretParam("INFURA_IPFS_API_KEY")
+  );
+}
+
+export function getInfuraIPFSApiKeySecret() {
+  return (
+    process.env.INFURA_IPFS_API_KEY_SECRET ||
+    getSecretParam("INFURA_IPFS_API_KEY_SECRET")
+  );
+}
+
 export function getCoinMarketCapApiKey() {
   return (
     process.env.COINMARKETCAP_API_KEY || getSecretParam("COINMARKETCAP_API_KEY")

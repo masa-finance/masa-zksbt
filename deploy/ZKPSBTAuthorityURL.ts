@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { DeployFunction } from "hardhat-deploy/dist/types";
+import { getEnvParams } from "../src/EnvParams";
 
 let admin: SignerWithAddress;
 
@@ -17,22 +18,41 @@ const func: DeployFunction = async ({
   const { deployer } = await getNamedAccounts();
 
   [, admin] = await ethers.getSigners();
+  const env = getEnvParams(network.name);
+  const baseUri = `${env.BASE_URI}`;
 
-  const verifierDeployed = await deployments.get("Verifier");
+  const constructorArguments = [
+    env.ADMIN || admin.address,
+    env.SBT_NAME,
+    env.SBT_SYMBOL,
+    baseUri,
+    ethers.constants.AddressZero,
+    [
+      env.SWAP_ROUTER,
+      env.WETH_TOKEN,
+      env.USDC_TOKEN,
+      env.MASA_TOKEN,
+      env.PROJECTFEE_RECEIVER || admin.address,
+      env.PROTOCOLFEE_RECEIVER || ethers.constants.AddressZero,
+      env.PROTOCOLFEE_AMOUNT || 0,
+      env.PROTOCOLFEE_PERCENT || 0
+    ]
+  ];
 
-  const constructorArguments = [verifierDeployed.address];
-
-  const verifyCreditScoreDeploymentResult = await deploy("VerifyCreditScore", {
-    from: deployer,
-    args: constructorArguments,
-    log: true
-  });
+  const zkpSBTAuthorityURLDeploymentResult = await deploy(
+    "ZKPSBTAuthorityURL",
+    {
+      from: deployer,
+      args: constructorArguments,
+      log: true
+    }
+  );
 
   // verify contract with etherscan, if its not a local network
   if (network.name !== "hardhat") {
     try {
       await hre.run("verify:verify", {
-        address: verifyCreditScoreDeploymentResult.address,
+        address: zkpSBTAuthorityURLDeploymentResult.address,
         constructorArguments
       });
     } catch (error) {
@@ -46,11 +66,6 @@ const func: DeployFunction = async ({
   }
 };
 
-func.tags = ["VerifyCreditScore"];
-func.dependencies = [
-  "Verifier",
-  "ZKPSBTSelfSovereign",
-  "ZKPSBTAuthority",
-  "ZKPSBTAuthorityURL"
-];
+func.tags = ["ZKPSBTAuthorityURL"];
+func.dependencies = [];
 export default func;

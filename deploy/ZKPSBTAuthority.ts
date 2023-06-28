@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { DeployFunction } from "hardhat-deploy/dist/types";
-import { getEnvParams, getPrivateKey } from "../src/EnvParams";
+import { getEnvParams } from "../src/EnvParams";
 
 let admin: SignerWithAddress;
 
